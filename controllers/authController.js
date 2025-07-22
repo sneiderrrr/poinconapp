@@ -2,6 +2,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const HistoriqueConnexion = require('../models/HistoriqueConnexion');
 
 exports.login = async (req, res) => {
   const { login, motDePasse } = req.body;
@@ -22,6 +23,14 @@ exports.login = async (req, res) => {
     user.nbErreursLogin = 0;
     await user.save();
 
+    // ✅ Champ corrigé : `dateConnexion` utilisé partout
+    await HistoriqueConnexion.create({
+      login: user.login,
+      nom: user.nom,
+      prenom: user.prenom,
+      dateConnexion: new Date()
+    });
+
     const token = jwt.sign(
       { id: user._id, login: user.login, role: user.role },
       process.env.JWT_SECRET,
@@ -41,6 +50,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error('Erreur dans login:', error);
     res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
