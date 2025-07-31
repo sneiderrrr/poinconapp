@@ -1,0 +1,49 @@
+/* ProduitAdd.css */
+.product-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form input, form select {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+}
+
+form button[type="submit"] {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #38B2AC; /* Teal color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button[type="submit"]:hover {
+  background-color: #319795; /* Darker teal on hover */
+}
+
+form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}

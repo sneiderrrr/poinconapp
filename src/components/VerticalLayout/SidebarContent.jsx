@@ -154,8 +154,8 @@ const SidebarContent = (props) => {
       <SimpleBar className="h-100" ref={ref}>
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
-            <li className="menu-title">{props.t("Menu")} </li>
-            <li>
+            {/* <li className="menu-title">{props.t("Menu")} </li> */}
+            {/* <li>
               <Link to="/#" className="has-arrow">
                 <i className="bx bx-home-circle"></i>
                 <span>{props.t("Dashboards")}</span>
@@ -179,7 +179,7 @@ const SidebarContent = (props) => {
                   </Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             <li className="menu-title">{props.t("Apps")}</li>
 
@@ -203,7 +203,53 @@ const SidebarContent = (props) => {
               </Link>
             </li>
 
-            <li>
+
+
+   <li>
+ <Link to="#" className="has-arrow">
+    <i className="bx bx-cube"></i>
+    <span>{props.t("Poincons")}</span>
+  </Link>
+  <ul className="sub-menu" aria-expanded="false">
+    <li>
+      <Link to="/poincon-list">{props.t("Liste des poinçons")}</Link>
+    </li>
+    <li>
+      <Link to="/poincons/add">{props.t("Ajouter un poinçon")}</Link>
+    </li>
+  </ul>
+</li>
+
+<li>
+  <Link to="#" className="has-arrow">
+    <i className="bx bx-purchase-tag-alt"></i>
+    <span>{props.t("Marques")}</span>
+  </Link>
+  <ul className="sub-menu" aria-expanded="false">
+    <li>
+      <Link to="/marque-list">{props.t("Liste des marques")}</Link>
+    </li>
+    <li>
+      <Link to="/marque/add">{props.t("Ajouter une marque")}</Link>
+    </li>
+  </ul>
+</li>
+
+
+<li>
+  <Link to="#" className="has-arrow">
+    <i className="bx bx-purchase-tag-alt"></i>
+    <span>{props.t("Audit trail")}</span>
+  </Link>
+  <ul className="sub-menu" aria-expanded="false">
+    <li>
+      <Link to="/audit-trail">{props.t("Liste des Audits")}</Link>
+    </li>
+   
+  </ul>
+</li>
+
+            {/* <li>
               <Link to="/#" className="has-arrow">
                 <i className="bx bx-store"></i>
                 <span>{props.t("Ecommerce")}</span>
@@ -307,7 +353,7 @@ const SidebarContent = (props) => {
                   </ul>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             <li>
               <Link to="/#" className="has-arrow ">
@@ -324,31 +370,43 @@ const SidebarContent = (props) => {
 
               </ul>
             </li>
-
+{ 
             <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-briefcase-alt-2"></i>
-                <span>{props.t("Projects")}</span>
+                <span>{props.t("Produits")}</span>
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/projects-grid">{props.t("Projects Grid")}</Link>
+                  <Link to="/produits-add">{props.t("Produits Add")}</Link>
                 </li>
                 <li>
-                  <Link to="/projects-list">{props.t("Projects List")}</Link>
+                  <Link to="/produits-list">{props.t("Produits List")}</Link>
                 </li>
-                <li>
-                  <Link to="/projects-overview">
-                    {props.t("Project Overview")}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/projects-create">{props.t("Create New")}</Link>
-                </li>
+                
+                
               </ul>
-            </li>
+            </li> }
 
+
+
+            { 
             <li>
+              <Link to="/#" className="has-arrow ">
+                <i className="bx bx-briefcase-alt-2"></i>
+                <span>{props.t("Statistiques")}</span>
+              </Link>
+              <ul className="sub-menu" aria-expanded="false">
+                <li>
+                  <Link to="/statistics">{props.t("Statistiques Générales")}</Link>
+                </li>
+                
+                
+                
+              </ul>
+            </li> }
+
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-task"></i>
                 <span>{props.t("Tasks")}</span>
@@ -364,7 +422,7 @@ const SidebarContent = (props) => {
                   <Link to="/tasks-create">{props.t("Create Task")}</Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             <li>
               <Link to="/#" className="has-arrow ">
@@ -394,7 +452,7 @@ const SidebarContent = (props) => {
               </ul>
             </li>
 
-            <li>
+            {/* <li>
               <Link to="/#">
 
                 <i className="bx bx-briefcase-alt"></i>
@@ -430,9 +488,9 @@ const SidebarContent = (props) => {
                   </ul>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
-            <li className="menu-title">Pages</li>
+            {/* <li className="menu-title">Pages</li>
             <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-user-circle"></i>
@@ -530,11 +588,11 @@ const SidebarContent = (props) => {
                   <Link to="/pages-500">{props.t("Error 500")}</Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
             <li className="menu-title">{props.t("Components")}</li>
 
-            <li>
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-tone"></i>
                 <span>{props.t("UI Elements")}</span>
@@ -614,8 +672,8 @@ const SidebarContent = (props) => {
                   <Link to="/ui-utilities">{props.t("Utilities")}</Link>
                 </li>
               </ul>
-            </li>
-
+            </li> */}
+{/* 
             <li>
               <Link to="/#" className="">
                 <i className="bx bxs-eraser"></i>
@@ -655,9 +713,9 @@ const SidebarContent = (props) => {
                   <Link to="/form-mask">{props.t("Form Mask")}</Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
-            <li>
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-list-ul"></i>
                 <span>{props.t("Tables")}</span>
@@ -679,10 +737,9 @@ const SidebarContent = (props) => {
                     {props.t("Drag & Drop Table")}
                   </Link>
                 </li> */}
-              </ul>
-            </li>
+              
 
-            <li>
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bxs-bar-chart-alt-2"></i>
                 <span>{props.t("Charts")}</span>
@@ -711,9 +768,9 @@ const SidebarContent = (props) => {
                   <Link to="/re-charts">{props.t("Re Chart")}</Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
-            <li>
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-aperture"></i>
                 <span>{props.t("Icons")}</span>
@@ -734,8 +791,8 @@ const SidebarContent = (props) => {
                   <Link to="/icons-fontawesome">{props.t("Font awesome")}</Link>
                 </li>
               </ul>
-            </li>
-
+            </li> */}
+{/* 
             <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-map"></i>
@@ -746,9 +803,9 @@ const SidebarContent = (props) => {
                   <Link to="/maps-google">{props.t("Google Maps")}</Link>
                 </li>
               </ul>
-            </li>
+            </li> */}
 
-            <li>
+            {/* <li>
               <Link to="/#" className="has-arrow ">
                 <i className="bx bx-share-alt"></i>
                 <span>{props.t("Multi Level")}</span>
@@ -771,7 +828,7 @@ const SidebarContent = (props) => {
                   </ul>
                 </li>
               </ul>
-            </li>
+            </li> */}
           </ul>
         </div>
       </SimpleBar>
