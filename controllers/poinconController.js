@@ -1,5 +1,7 @@
 const Poincon = require('../models/Poincon');
+const AuditTrail = require('../models/AuditTrail');
 const Marque = require('../models/Marque');
+const logAuditTrail = require('../middleware/auditLogger');  // Vérifie que le chemin est correct
 
 // Créer un poinçon
 exports.createPoincon = async (req, res) => {
@@ -32,7 +34,12 @@ exports.createPoincon = async (req, res) => {
       createdBy: req.user.id
     });
 
+    // Sauvegarder le poinçon
     await poincon.save();
+
+    // Enregistrer l'action dans AuditTrail (création)
+    await logAuditTrail(req, "CREATE", poincon._id.toString(), `Création du poinçon ${poincon.codeFormat}`);
+
     res.status(201).json({ message: 'Poinçon créé avec succès', poincon });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: error.message });
@@ -79,6 +86,9 @@ exports.updatePoincon = async (req, res) => {
     const poincon = await Poincon.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!poincon) return res.status(404).json({ message: 'Poinçon non trouvé' });
 
+    // Enregistrer l'action dans AuditTrail (mise à jour)
+    await logAuditTrail(req, "UPDATE", poincon._id.toString(), `Mise à jour du poinçon ${poincon.codeFormat}`);
+
     res.status(200).json({ message: 'Poinçon mis à jour', poincon });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: error.message });
@@ -90,6 +100,10 @@ exports.deletePoincon = async (req, res) => {
   try {
     const poincon = await Poincon.findByIdAndDelete(req.params.id);
     if (!poincon) return res.status(404).json({ message: 'Poinçon non trouvé' });
+
+    // Enregistrer l'action dans AuditTrail (suppression)
+    await logAuditTrail(req, "DELETE", poincon._id.toString(), `Suppression du poinçon ${poincon.codeFormat}`);
+
     res.status(200).json({ message: 'Poinçon supprimé avec succès' });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur', error: error.message });

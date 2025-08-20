@@ -5,6 +5,7 @@ const historiqueConnexionSchema = new mongoose.Schema({
   login: String,
   nom: String,
   prenom: String,
+  role: String, // ✅ AJOUTÉ
   dateConnexion: {
     type: Date,
     default: Date.now

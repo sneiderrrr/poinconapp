@@ -1,4 +1,5 @@
 const Fournisseur = require('../models/Fournisseur');
+const AuditTrail = require('../models/AuditTrail'); // Modèle AuditTrail
 
 // Créer un fournisseur
 exports.createFournisseur = async (req, res) => {
@@ -11,7 +12,7 @@ exports.createFournisseur = async (req, res) => {
       return res.status(400).json({ message: 'Code fournisseur déjà utilisé.' });
     }
 
-    const fournisseur = new Fournisseur({
+    const newFournisseur = new Fournisseur({
       code,
       designation,
       pays,
@@ -19,10 +20,20 @@ exports.createFournisseur = async (req, res) => {
       createdBy: req.user.id
     });
 
-    await fournisseur.save();
-    res.status(201).json({ message: 'Fournisseur créé avec succès', fournisseur });
+    await newFournisseur.save();
+
+    // Enregistrer l'action dans AuditTrail
+    const audit = new AuditTrail({
+      actionType: 'CREATE',
+      reference: newFournisseur._id,
+      user: req.user.id,
+      description: `Création du fournisseur ${newFournisseur.designation}`
+    });
+    await audit.save();
+
+    res.status(201).json({ message: 'Fournisseur créé avec succès', fournisseur: newFournisseur });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la création du fournisseur', error: error.message });
   }
 };
 
@@ -50,26 +61,72 @@ exports.getFournisseurById = async (req, res) => {
 // Mettre à jour un fournisseur
 exports.updateFournisseur = async (req, res) => {
   try {
-    const updates = req.body;
-    updates.updatedAt = new Date();
+    const { code, designation, pays, statut } = req.body;
+    const fournisseur = await Fournisseur.findByIdAndUpdate(
+      req.params.id, 
+      { code, designation, pays, statut }, 
+      { new: true }
+    );
 
-    const fournisseur = await Fournisseur.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!fournisseur) return res.status(404).json({ message: 'Fournisseur non trouvé' });
+
+    // Enregistrer l'action dans AuditTrail
+    const audit = new AuditTrail({
+      actionType: 'UPDATE',
+      reference: fournisseur._id,
+      user: req.user.id,
+      description: `Mise à jour du fournisseur ${fournisseur.designation}`
+    });
+    await audit.save();
 
     res.status(200).json({ message: 'Fournisseur mis à jour', fournisseur });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du fournisseur', error: error.message });
   }
 };
+
+exports.getFournisseursParPays = async (req, res) => {
+  try {
+    const fournisseurs = await Fournisseur.aggregate([
+      {
+        $group: {
+          _id: "$pays", // Groupement par pays
+          count: { $sum: 1 }, // Compte des fournisseurs par pays
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Tri des résultats par pays
+      },
+    ]);
+
+    res.status(200).json(fournisseurs); // Renvoie les résultats
+  } catch (err) {
+    console.error('Erreur dans getFournisseursParPays:', err);
+    res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  }
+};
+
+
+
 
 // Supprimer un fournisseur
 exports.deleteFournisseur = async (req, res) => {
   try {
     const fournisseur = await Fournisseur.findByIdAndDelete(req.params.id);
+
     if (!fournisseur) return res.status(404).json({ message: 'Fournisseur non trouvé' });
+
+    // Enregistrer l'action dans AuditTrail
+    const audit = new AuditTrail({
+      actionType: 'DELETE',
+      reference: fournisseur._id,
+      user: req.user.id,
+      description: `Suppression du fournisseur ${fournisseur.designation}`
+    });
+    await audit.save();
 
     res.status(200).json({ message: 'Fournisseur supprimé avec succès' });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la suppression du fournisseur', error: error.message });
   }
 };

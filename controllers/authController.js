@@ -24,12 +24,14 @@ exports.login = async (req, res) => {
     await user.save();
 
     // ✅ Champ corrigé : `dateConnexion` utilisé partout
-    await HistoriqueConnexion.create({
-      login: user.login,
-      nom: user.nom,
-      prenom: user.prenom,
-      dateConnexion: new Date()
-    });
+   await HistoriqueConnexion.create({
+  login: user.login,
+  nom: user.nom,
+  prenom: user.prenom,
+  role: user.role, // ✅ nécessaire pour les stats par type
+  dateConnexion: new Date()
+});
+
 
     const token = jwt.sign(
       { id: user._id, login: user.login, role: user.role },

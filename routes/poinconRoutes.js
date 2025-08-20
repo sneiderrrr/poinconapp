@@ -4,6 +4,7 @@ const poinconController = require('../controllers/poinconController');
 const auth = require('../middleware/auth');
 const checkPermission = require('../middleware/checkPermission');
 
+// Appliquer le middleware d'authentification à toutes les routes
 router.use(auth);
 
 router.post('/', checkPermission('poincons', 'create'), poinconController.createPoincon);

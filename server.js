@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { Server } = require("socket.io");
+const statisticsRoutes = require('./routes/statistics.routes');
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -28,12 +29,28 @@ const authRoutes = require('./routes/authRoutes');
 const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const historiqueRoutes = require('./routes/historiqueRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const poinconRoutes = require('./routes/poinconRoutes');
+const marqueRoutes = require('./routes/marqueRoutes');
+const formeRoutes = require('./routes/formeRoutes');
+const produitRoutes = require('./routes/produitRoutes');
+const etatPoinconRoutes = require('./routes/etatPoinconRoutes');
+const auditTrailRoutes = require('./routes/auditTrailRoutes'); // Importer la route pour l'audit trail
+const entretienRoutes = require("./routes/entretienRoutes");
 
+// Enregistrer toutes les routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/fournisseurs', fournisseurRoutes);
 app.use('/api/historique', historiqueRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/poincons', poinconRoutes);
+app.use('/api/marques', marqueRoutes);
+app.use('/api/formes', formeRoutes);
+app.use('/api/produits', produitRoutes);
+app.use('/api/etatPoincons', etatPoinconRoutes);
+app.use('/api/audit-trail', auditTrailRoutes);  // Assurez-vous que cette route est bien ajoutée
+app.use('/api', statisticsRoutes);
+app.use("/api/entretiens", entretienRoutes);
 
 // Lancement serveur + socket.io
 const io = new Server(server, {

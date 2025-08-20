@@ -14,5 +14,6 @@ router.get('/', checkPermission('fournisseurs', 'read'), fournisseurController.g
 router.get('/:id', checkPermission('fournisseurs', 'read'), fournisseurController.getFournisseurById);
 router.put('/:id', checkPermission('fournisseurs', 'update'), fournisseurController.updateFournisseur);
 router.delete('/:id', checkPermission('fournisseurs', 'delete'), fournisseurController.deleteFournisseur);
+router.get('/fournisseurs-par-pays', fournisseurController.getFournisseursParPays);
 
 module.exports = router;

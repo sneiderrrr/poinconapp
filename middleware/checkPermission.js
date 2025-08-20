@@ -7,7 +7,8 @@ const permissions = {
     poincons: ['create', 'read', 'update', 'delete'],
     fournisseurs: ['create', 'read', 'update', 'delete'],
     marques: ['create', 'read', 'update', 'delete'],
-    etatpoincons: ['create', 'read', 'update', 'delete'], // généralement en camelCase
+    etatpoincons: ['create', 'read', 'update', 'delete'], 
+    formes: ['create', 'read', 'update', 'delete'], 
   },
   Superviseur: {
     users: ['read'],
@@ -16,6 +17,8 @@ const permissions = {
     fournisseurs: ['read'],
     marques: ['read'],
     etatpoincons: ['read'],
+    formes: ['read'], 
+
   },
   Agent: {
     users: [],
@@ -24,6 +27,8 @@ const permissions = {
     fournisseurs: [],
     marques: [],
     etatpoincons: [],
+    formes: ['read'], 
+
   },
 };
 
