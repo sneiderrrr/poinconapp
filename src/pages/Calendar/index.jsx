@@ -1,24 +1,13 @@
+// ... (tous les imports inchangés)
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Container,
-  Form,
-  FormFeedback,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Row,
+  Button, Card, CardBody, Col, Container, Form,
+  Input, Label, Modal, ModalBody, ModalHeader, Row
 } from "reactstrap";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
 import PropTypes from "prop-types";
 
 import Breadcrumbs from "/src/components/Common/Breadcrumb";
@@ -38,13 +27,14 @@ const EntretienCalendar = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [entretienEvents, setEntretienEvents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [detailModalOpen, setDetailModalOpen] = useState(false); // 🔹 Ajouté
+  const [selectedEvent, setSelectedEvent] = useState(null); // 🔹 Ajouté pour détails
   const [selectedDate, setSelectedDate] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [produits, setProduits] = useState([]);
   const [userId, setUserId] = useState(null);
 
-  // ✅ Correction ici : mise dans le useEffect
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -65,7 +55,9 @@ const EntretienCalendar = () => {
 
   const fetchProduits = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/produits", { headers: getAuthHeaders() });
+      const res = await axios.get("http://localhost:5000/api/produits", {
+        headers: getAuthHeaders()
+      });
       setProduits(res.data);
     } catch (err) {
       console.error("Erreur chargement produits:", err);
@@ -74,7 +66,9 @@ const EntretienCalendar = () => {
 
   const fetchEntretiens = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/entretiens", { headers: getAuthHeaders() });
+      const res = await axios.get("http://localhost:5000/api/entretiens", {
+        headers: getAuthHeaders()
+      });
       const events = res.data.map((e) => ({
         id: e._id,
         title: `Entretien: ${e.produit?.code || "Sans produit"}`,
@@ -83,6 +77,11 @@ const EntretienCalendar = () => {
           produitId: e.produit?._id,
           produitCode: e.produit?.code,
           commentaire: e.commentaire,
+          referenceUtilisation: e.referenceUtilisation,
+          nettoyageProduit: e.nettoyage?.produit,
+          nettoyageDate: e.nettoyage?.date,
+          lubrificationProduit: e.lubrification?.produit,
+          lubrificationDate: e.lubrification?.date,
         },
         className: "bg-info text-white",
       }));
@@ -97,7 +96,6 @@ const EntretienCalendar = () => {
     fetchEntretiens();
   }, []);
 
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -108,38 +106,37 @@ const EntretienCalendar = () => {
       nettoyageDate: entretien.nettoyage?.date?.substr(0, 10) || "",
       lubrificationProduit: entretien.lubrification?.produit || "",
       lubrificationDate: entretien.lubrification?.date?.substr(0, 10) || "",
-      date: entretien.date ? entretien.date.substr(0, 10) : selectedDate?.toISOString().substr(0, 10) || "",
+      date: entretien.date
+        ? entretien.date.substr(0, 10)
+        : selectedDate?.toISOString().substr(0, 10) || "",
     },
     validationSchema: Yup.object({
       produit: Yup.string().required("Produit requis"),
       date: Yup.date().required("Date requise"),
     }),
 
+    onSubmit: async (values) => {
+      try {
+        const payload = {
+          reference: `ENT-${Math.floor(Math.random() * 10000)}`,
+          date: new Date(values.date).toISOString(),
+          produit: values.produit,
+          referenceUtilisation: values.referenceUtilisation,
+          commentaire: values.commentaire,
+          nettoyage: {
+            date: new Date(values.nettoyageDate).toISOString(),
+            produit: values.nettoyageProduit,
+          },
+          lubrification: {
+            date: new Date(values.lubrificationDate).toISOString(),
+            produit: values.lubrificationProduit,
+          },
+          utilisateur: userId || null,
+        };
 
-    
-  onSubmit: async (values) => {
-  try {
-    const payload = {
-      reference: `ENT-${Math.floor(Math.random() * 10000)}`,
-      date: new Date(values.date).toISOString(),
-      produit: values.produit,
-      referenceUtilisation: values.referenceUtilisation,
-      commentaire: values.commentaire,
-      nettoyage: {
-        date: new Date(values.nettoyageDate).toISOString(),
-        produit: values.nettoyageProduit,
-      },
-      lubrification: {
-        date: new Date(values.lubrificationDate).toISOString(),
-        produit: values.lubrificationProduit,
-      },
-      utilisateur: userId || null, // ✅ corrige ici : champ attendu par le modèle
-    };
-
-    
-       const res = await axios.get("http://localhost:5000/api/entretiens", {
-  headers: getAuthHeaders()
-});
+        const res = await axios.post("http://localhost:5000/api/entretiens", payload, {
+          headers: getAuthHeaders(),
+        });
 
         const produitInfo = produits.find((p) => p._id === values.produit);
         const newEvent = {
@@ -176,18 +173,30 @@ const EntretienCalendar = () => {
     toggleModal();
   };
 
+  // 🔹 MODIFIÉ : clic sur un événement -> affiche d’abord la modal détails
   const handleEventClick = (arg) => {
     const evt = arg.event;
+    setSelectedEvent(evt);
+    setDetailModalOpen(true); // ouvre la modal détail
+    // Prépare aussi les données si on veut modifier après
     setEntretien({
       id: evt.id,
       produit: evt.extendedProps.produitId,
       commentaire: evt.extendedProps.commentaire,
+      referenceUtilisation: evt.extendedProps.referenceUtilisation,
+      nettoyage: {
+        produit: evt.extendedProps.nettoyageProduit,
+        date: evt.extendedProps.nettoyageDate,
+      },
+      lubrification: {
+        produit: evt.extendedProps.lubrificationProduit,
+        date: evt.extendedProps.lubrificationDate,
+      },
       date: evt.start.toISOString(),
     });
     setSelectedDate(evt.start);
     setIsEdit(true);
     setDeleteId(evt.id);
-    toggleModal();
   };
 
   const handleDelete = async () => {
@@ -245,6 +254,30 @@ const EntretienCalendar = () => {
           </Row>
         </Container>
 
+        {/* 🔹 Modal détails lecture seule */}
+        <Modal isOpen={detailModalOpen} toggle={() => setDetailModalOpen(false)} centered>
+          <ModalHeader toggle={() => setDetailModalOpen(false)}>Détails Entretien</ModalHeader>
+          <ModalBody>
+            {selectedEvent && (
+              <div>
+                <p><b>Date :</b> {selectedEvent.start.toLocaleDateString("fr-FR")}</p>
+                <p><b>Produit :</b> {selectedEvent.extendedProps.produitCode || "N/A"}</p>
+                <p><b>Référence Utilisation :</b> {selectedEvent.extendedProps.referenceUtilisation || "-"}</p>
+                <p><b>Produit Nettoyage :</b> {selectedEvent.extendedProps.nettoyageProduit || "-"}</p>
+                <p><b>Date Nettoyage :</b> {selectedEvent.extendedProps.nettoyageDate ? new Date(selectedEvent.extendedProps.nettoyageDate).toLocaleDateString("fr-FR") : "-"}</p>
+                <p><b>Produit Lubrification :</b> {selectedEvent.extendedProps.lubrificationProduit || "-"}</p>
+                <p><b>Date Lubrification :</b> {selectedEvent.extendedProps.lubrificationDate ? new Date(selectedEvent.extendedProps.lubrificationDate).toLocaleDateString("fr-FR") : "-"}</p>
+                <p><b>Commentaire :</b> {selectedEvent.extendedProps.commentaire || "-"}</p>
+              </div>
+            )}
+            <div className="text-end mt-3">
+              <Button color="secondary" onClick={() => setDetailModalOpen(false)}>Fermer</Button>{" "}
+              <Button color="primary" onClick={() => { setDetailModalOpen(false); setModalOpen(true); }}>Modifier</Button>
+            </div>
+          </ModalBody>
+        </Modal>
+
+        {/* 🔹 Modal Formulaire existante */}
         <Modal isOpen={modalOpen} toggle={toggleModal} centered>
           <ModalHeader toggle={toggleModal}>{isEdit ? "Modifier Entretien" : "Ajouter Entretien"}</ModalHeader>
           <ModalBody>
