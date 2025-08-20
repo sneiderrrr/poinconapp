@@ -13,5 +13,6 @@ router.get('/', checkPermission('users', 'read'), userController.getUsers);
 router.get('/:id', checkPermission('users', 'read'), userController.getUserById);
 router.put('/:id', checkPermission('users', 'update'), userController.updateUser);
 router.delete('/:id', checkPermission('users', 'delete'), userController.deleteUser);
+router.put('/:id/permissions', checkPermission('users', 'update'), userController.updateUserPermissions);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { Server } = require("socket.io");
+const path = require('path');  // <-- Ajoute cette ligne
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -28,14 +29,36 @@ const authRoutes = require('./routes/authRoutes');
 const fournisseurRoutes = require('./routes/fournisseurRoutes');
 const historiqueRoutes = require('./routes/historiqueRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const poinconRoutes = require('./routes/poinconRoutes');
+const marqueRoutes = require('./routes/marqueRoutes');
+const formeRoutes = require('./routes/formeRoutes');
+const produitRoutes = require('./routes/produitRoutes');
+const etatPoinconRoutes = require('./routes/etatPoinconRoutes');
+const auditTrailRoutes = require('./routes/auditTrailRoutes'); 
+const compromeuseRoutes = require('./routes/compromeuseRoutes'); 
+const entretienRoutes = require('./routes/entretienRoutes'); 
+const utilisationRoutes = require('./routes/utilisationRoutes');
+const detailPoinconRoutes = require("./routes/detailPoinconRoutes");
 
+// Enregistrer toutes les routes
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/fournisseurs', fournisseurRoutes);
 app.use('/api/historique', historiqueRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/poincons', poinconRoutes);
+app.use('/api/marques', marqueRoutes);
+app.use('/api/formes', formeRoutes);
+app.use('/api/produits', produitRoutes);
+app.use('/api/etatPoincons', etatPoinconRoutes);
+app.use('/api/audit-trail', auditTrailRoutes); 
+app.use('/api/compromeuses', compromeuseRoutes); 
+app.use('/api/entretiens', entretienRoutes); 
+app.use('/api/utilisations', utilisationRoutes);
+app.use("/api/detailPoincon", detailPoinconRoutes);
 
-// Lancement serveur + socket.io
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",

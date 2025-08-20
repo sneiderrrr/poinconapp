@@ -88,3 +88,27 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 };
+
+exports.updateUserPermissions = async (req, res) => {
+  try {
+    const { permissions } = req.body;
+
+    if (!permissions || typeof permissions !== "object") {
+      return res.status(400).json({ message: "Permissions invalides" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { permissions },
+      { new: true, runValidators: true }
+    ).select("-motDePasse");
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    res.status(200).json({ message: "Permissions mises à jour", user });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};
